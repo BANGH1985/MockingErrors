@@ -1,16 +1,10 @@
-const { CustomError, errorDictionary } = require('../utils/customErrors');
+const logger = require('../config/logger');
 
 const errorHandler = (err, req, res, next) => {
     logger.error(err.stack);
 
-    if (err instanceof CustomError) {
-        return res.status(err.statusCode).json({
-            error: err.message
-        });
-    }
-
-    res.status(500).json({
-        error: 'Algo salió mal, por favor intente nuevamente más tarde.'
+    res.status(err.statusCode || 500).json({
+        error: err.message || 'Algo salió mal, por favor intente nuevamente más tarde.'
     });
 };
 

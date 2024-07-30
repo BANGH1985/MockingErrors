@@ -1,54 +1,63 @@
 const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, printf, errors, colorize } = format;
+const { timestamp, printf, errors } = format;
 
 // Define los niveles de logging
 const levels = {
-    debug: 0,
-    http: 1,
-    info: 2,
-    warning: 3,
-    error: 4,
-    fatal: 5,
+  debug: 0,
+  http: 1,
+  info: 2,
+  warning: 3,
+  error: 4,
+  fatal: 5,
 };
 
-// Definición de formato de salida
+// Colores opcionales para diferentes niveles (si se usa colorize)
+const colors = {
+  debug: 'blue',
+  http: 'magenta',
+  info: 'green',
+  warning: 'yellow',
+  error: 'red',
+  fatal: 'bold red'
+};
+
+// Formato de los logs
 const logFormat = printf(({ level, message, timestamp, stack }) => {
-    return `${timestamp} [${level}]: ${stack || message}`;
+  return `${timestamp} [${level}]: ${stack || message}`;
 });
 
 // Logger para desarrollo
 const devLogger = createLogger({
-    levels,
-    format: combine(
-        colorize(),
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        errors({ stack: true }),
-        logFormat
-    ),
-    transports: [
-        new transports.Console({
-        level: 'debug',
-        }),
-    ],
+  levels,
+  format:( 
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    errors({ stack: true }),
+    logFormat
+  ),
+  transports: [
+    new transports.Console({
+      level: 'debug',
+    }),
+  ],
 });
 
 // Logger para producción
 const prodLogger = createLogger({
-    levels,
-    format: combine(
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        errors({ stack: true }),
-        logFormat
-    ),
-    transports: [
-        new transports.Console({
-        level: 'info',
-        }),
-        new transports.File({
-        filename: 'errors.log',
-        level: 'error',
-        }),
-    ],
+  levels,
+  format: (
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    errors({ stack: true }),
+    logFormat
+  ),
+  transports: [
+    new transports.Console({
+      level: 'info',
+    }),
+    new transports.File({
+      filename: 'errors.log',
+      level: 'error',
+    }),
+  ],
 });
 
 // Seleccionar logger basado en el entorno
