@@ -30,6 +30,7 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
 const devLogger = createLogger({
   levels,
   format:( 
+    colorize(),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true }),
     logFormat
@@ -45,6 +46,7 @@ const devLogger = createLogger({
 const prodLogger = createLogger({
   levels,
   format: (
+    colorize(),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true }),
     logFormat
